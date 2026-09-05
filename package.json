@@ -1,0 +1,8 @@
+{
+  "name": "trazo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TRAZO — una pequeña rebelión de tinta. Un juego de Astra.",
+  "scripts": {"test": "node scripts/check.cjs", "build": "node scripts/build.cjs", "thumbnail": "node scripts/thumbnail.cjs"},
+  "devDependencies": {"@napi-rs/canvas": "1.0.8", "css-tree": "3.1.0", "jsdom": "26.1.0"}
+}
