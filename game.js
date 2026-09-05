@@ -69,7 +69,7 @@ function updateHud(){if(!player)return;$('hearts').innerHTML=Array.from({length:
 let hudTime=0;
 function update(dt){
   clock+=dt;music(dt);shake=Math.max(0,shake-dt*40);flash=Math.max(0,flash-dt);turn=Math.max(0,turn-dt);
-  if(state==='intro'){introTime+=dt;const s=introTime<2.6?'Toda gran historia empieza en una página en blanco.':introTime<5?'Esta empezó con un garabato.':introTime<7.6?'La papelería tenía otros planes.':'Y tú… un lápiz con muy mala leche.';$('subtitle').innerHTML='<span>'+s+'</span>';if(introTime>=10.4)beginRun();return}
+  if(state==='intro'){introTime+=dt;const s=introTime<2.6?'Toda gran historia empieza en una página en blanco.':introTime<5?'Esta empezó con un garabato.':introTime<7.6?'La papelería tenía otros planes.':'Y tú… un lápiz con muy mala leche.';if($('subtitle').dataset.line!==s){$('subtitle').dataset.line=s;$('subtitle').innerHTML='<span>'+s+'</span>';}if(introTime>=10.4)beginRun();return}
   if(state!=='play')return;
   runTime+=dt;bannerTime=Math.max(0,bannerTime-dt);comboTime-=dt;if(comboTime<=0)combo=0;player.invuln=Math.max(0,player.invuln-dt);player.attack=Math.max(0,player.attack-dt);player.attackCd=Math.max(0,player.attackCd-dt);player.chainTime-=dt;player.dashCd=Math.max(0,player.dashCd-dt);
   const move=movement();player.walk=Math.min(1,Math.hypot(move.x,move.y));
@@ -128,8 +128,8 @@ if(document.modelContext?.registerTool){
  const lifecycle=new AbortController();
  const register=tool=>{try{Promise.resolve(document.modelContext.registerTool(tool,{signal:lifecycle.signal})).catch(()=>{})}catch{}};
  const read=()=>({state,page:page+1,wave,score,health:player?.hp??null,ink:Math.floor(player?.ink||0)});
- register({name:'read_trazo_game',title:'Consultar TRAZO',description:'Read the current game state and score.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(input){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object.');return read()}});
- register({name:'start_trazo_game',title:'Abrir la libreta',description:'Start a new TRAZO game, including its opening scene. Available from the title or results screen.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object.');if(!['menu','dead','win'].includes(state))throw new Error('A game is already in progress.');beginIntro();return read()}});
+ register({name:'read_trazo_game',title:'Consultar TRAZO',description:'Read the current game state and score.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(input){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length)throw new Error('Expected an empty object.');return read()}});
+ register({name:'start_trazo_game',title:'Abrir la libreta',description:'Start a new TRAZO game, including its opening scene. Available from the title or results screen.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length)throw new Error('Expected an empty object.');if(!['menu','dead','win'].includes(state))throw new Error('A game is already in progress.');beginIntro();return read()}});
  window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});
 }
 syncSound();requestAnimationFrame(frame);
